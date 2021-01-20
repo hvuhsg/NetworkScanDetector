@@ -2,8 +2,6 @@ from threading import Thread, Lock
 from queue import Empty
 from time import sleep
 from tinydb import TinyDB
-from tinydb.storages import JSONStorage
-from tinydb.middlewares import CachingMiddleware
 
 from utils import pkg_to_json
 
@@ -13,7 +11,7 @@ class Storage(Thread):
         super().__init__()
         self.packets_queue = packets_queue
         self._stop = False
-        self.db = TinyDB("data/db.json")#, storage=CachingMiddleware(JSONStorage))
+        self.db = TinyDB("data/db.json")
         self.packets = self.db.table("packets")
         self.db_lock = Lock()
 

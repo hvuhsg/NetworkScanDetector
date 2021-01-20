@@ -20,7 +20,7 @@ class Sniffer(Thread):
         )
 
     def is_incoming(self, packet):
-        return packet["IP"].dst in ("10.128.0.3", "192.168.1.101")
+        return packet["IP"].dst in ("10.128.0.3", "192.168.1.101", "192.168.1.126")
 
     def add_packet_to_queue(self, packet):
         self.packets_queue.put(packet)
