@@ -8,15 +8,23 @@ class Sniffer(Thread):
         super().__init__()
         self.packets = []
         self.packets_queue = packets_queue
+        self._stop = False
 
     def run(self):
-        sniff(filter="tcp", prn=self.add_packet_to_queue, store=False, lfilter=self.is_incoming)
+        sniff(
+            filter="tcp",
+            prn=self.add_packet_to_queue,
+            store=False,
+            lfilter=self.is_incoming,
+            stop_filter=lambda x: self._stop
+        )
 
     def is_incoming(self, packet):
-        return packet["IP"].dst in ("10.128.0.3", )
+        return packet["IP"].dst in ("10.128.0.3", "192.168.1.101")
 
     def add_packet_to_queue(self, packet):
-        # print(packet.summary())
-        # print(packet["IP"].src, "-->", packet["IP"].dst)
         self.packets_queue.put(packet)
+
+    def stop(self):
+        self._stop = True
 
