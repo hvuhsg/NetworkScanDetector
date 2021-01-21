@@ -1,7 +1,8 @@
 from time import sleep
+from tinydb import Query
+from loguru import logger
 
 from storage import Storage
-from tinydb import Query
 
 
 class Analyser:
@@ -11,6 +12,7 @@ class Analyser:
         self.reported = []
 
     def analyse(self):
+        logger.debug("Analysing traffic...")
         Packet = Query()
         with self.storage.db_lock:
             packets = self.storage.packets.search(Packet.TCP.flags == "S")
@@ -27,20 +29,10 @@ class Analyser:
 
         for ip, info in ips.items():
             if len(info["ports"]) >= 5:
-                print("PORT SCAN FROM", ip, len(info["ports"]), "PORTS SCANED")
-
-        # for client, packets in self.storage.connections.copy().items():
-        #     port_syn = set()
-        #     if client in self.reported:
-        #         continue
-        #     for packet in packets.copy():
-        #         if ("S" in packet["flags"] and "A" not in packet["flags"]) and packet["dport"] not in port_syn:
-        #             port_syn.add(packet["dport"])
-        #     if len(port_syn) >= 5:
-        #         print("PORT SCAN FROM", client, len(port_syn), "PORTS SCANED")
-        #         self.reported.append(client)
+                logger.success("PORT SCAN FROM", ip, len(info["ports"]), "PORTS SCANED")
 
     def run(self):
+        logger.debug("Start analyser.")
         while not self._stop:
             self.analyse()
             try:
@@ -49,4 +41,5 @@ class Analyser:
                 break
 
     def stop(self):
+        logger.debug("Stoping analyser...")
         self._stop = True

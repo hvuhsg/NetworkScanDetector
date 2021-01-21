@@ -2,6 +2,7 @@ from threading import Thread, Lock
 from queue import Empty
 from time import sleep
 from tinydb import TinyDB
+from loguru import logger
 
 from utils import pkg_to_json
 
@@ -27,10 +28,11 @@ class Storage(Thread):
                     with self.db_lock:
                         self.packets.insert(json_packet)
                 except TypeError:
-                    pass
+                    logger.debug(f"Can't insert json format {json_packet}")
             except Empty:
                 sleep(0.01)
 
     def stop(self):
+        logger.debug("Stoping storage manager.")
         self.db.close()
         self._stop = True

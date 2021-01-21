@@ -1,5 +1,6 @@
 from queue import Queue
 from threading import Thread
+from loguru import logger
 from scapy.all import sniff
 
 
@@ -15,6 +16,7 @@ class Sniffer(Thread):
         self.my_ip = self.find_my_ip()
 
     def find_my_ip(self):
+        logger.debug("Finding local ip...")
         src = set()
         dst = set()
         while True:
@@ -28,6 +30,7 @@ class Sniffer(Thread):
                     return packet["IP"].dst
                 else:
                     dst.add(packet["IP"].dst)
+            logger.debug("Round of finding ip do not work starting a new one")
 
     def run(self):
         self.setup()
@@ -46,5 +49,6 @@ class Sniffer(Thread):
         self.packets_queue.put(packet)
 
     def stop(self):
+        logger.debug("Stoping sniffer...")
         self._stop = True
 
