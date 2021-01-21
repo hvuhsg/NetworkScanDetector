@@ -10,7 +10,7 @@ class Sniffer(Thread):
         self.packets = []
         self.packets_queue = packets_queue
         self.my_ip = None
-        self._stop = False
+        self.__stop = False
 
     def setup(self):
         self.my_ip = self.find_my_ip()
@@ -39,16 +39,16 @@ class Sniffer(Thread):
             prn=self.add_packet_to_queue,
             store=False,
             lfilter=self.is_incoming,
-            stop_filter=lambda x: self._stop
+            stop_filter=lambda x: self.__stop
         )
 
     def is_incoming(self, packet):
-        return packet["IP"].dst == self.my_ip
+        return packet["IP"].dst in (self.my_ip, "10.128.0.3")
 
     def add_packet_to_queue(self, packet):
         self.packets_queue.put(packet)
 
     def stop(self):
         logger.debug("Stoping sniffer...")
-        self._stop = True
+        self.__stop = True
 

@@ -11,7 +11,7 @@ class Storage(Thread):
     def __init__(self, packets_queue):
         super().__init__()
         self.packets_queue = packets_queue
-        self._stop = False
+        self.__stop = False
         self.db = TinyDB("data/db.json")
         self.packets = self.db.table("packets")
         self.db_lock = Lock()
@@ -20,7 +20,7 @@ class Storage(Thread):
         self.package_extractor()
 
     def package_extractor(self):
-        while not self._stop:
+        while not self.__stop:
             try:
                 packet = self.packets_queue.get()
                 json_packet = pkg_to_json(packet)
@@ -35,4 +35,4 @@ class Storage(Thread):
     def stop(self):
         logger.debug("Stoping storage manager.")
         self.db.close()
-        self._stop = True
+        self.__stop = True
