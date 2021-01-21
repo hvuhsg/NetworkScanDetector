@@ -1,4 +1,4 @@
-from time import sleep
+from time import sleep, time
 from tinydb import Query
 from loguru import logger
 
@@ -10,6 +10,7 @@ class Analyser:
         self.storage = storage
         self.__stop = False
         self.reported = []
+        self.ips = self.storage.db.table("ips")
 
     def analyse(self):
         logger.debug("Analysing traffic...")
@@ -28,8 +29,17 @@ class Analyser:
                 ips[src_ip]["ports"].add(packet["TCP"]["dport"])
 
         for ip, info in ips.items():
-            if len(info["ports"]) >= 3:
+            if self.its_scanner(info):
                 logger.success(f"PORT SCAN FROM {ip} {len(info['ports'])} PORTS SCANED")
+                IP = Query()
+                ip_info = self.ips.search(IP.ip == ip)
+                if not ip_info:
+                    self.ips.insert({"ip": ip, "scanner": True, "ports": info["ports"], "time": time()})
+                elif ip_info["scanner"] is False:
+                    self.ips.update({"scanner": True}, IP.ip == ip)
+
+    def its_scanner(self, info):
+        return len(info["ports"]) >= 3
 
     def run(self):
         logger.debug("Start analyser.")
