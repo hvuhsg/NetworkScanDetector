@@ -1,10 +1,23 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from tinydb import TinyDB
 
 from utils import get_db
 
 app = FastAPI()
 
+
+origins = [
+    "*" # TODO - change to real origins
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 MAX_LIMIT = 50
 
