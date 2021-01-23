@@ -27,7 +27,7 @@ class Analyser(Thread):
             src_ip = packet["IP"]["src"]
             if src_ip not in ips:
                 ips[src_ip] = {}
-                ips[src_ip]["ports"] = set()
+                ips[src_ip]["ports"] = []
             if packet["TCP"]["dport"] not in ips[src_ip]["ports"]:
                 ips[src_ip]["ports"].add(packet["TCP"]["dport"])
 
