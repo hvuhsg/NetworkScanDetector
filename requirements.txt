@@ -2,3 +2,4 @@ scapy
 tinydb
 loguru
 fastapi
+uvicorn
