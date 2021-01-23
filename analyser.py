@@ -4,6 +4,7 @@ from loguru import logger
 from threading import Thread
 
 from storage import Storage
+from utils import get_db
 
 
 class Analyser(Thread):
@@ -12,7 +13,7 @@ class Analyser(Thread):
         self.storage = storage
         self.__stop = False
         self.reported = []
-        self.ips = self.storage.db.table("ips")
+        self.ips = get_db().table("ips")
 
     def analyse(self):
         logger.debug("Analysing traffic...")

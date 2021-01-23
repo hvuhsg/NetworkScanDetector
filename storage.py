@@ -1,7 +1,6 @@
 from threading import Thread, Lock
 from queue import Empty
 from time import sleep
-from tinydb import TinyDB
 from loguru import logger
 
 from utils import pkg_to_json, get_db

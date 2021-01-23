@@ -12,7 +12,7 @@ MAX_LIMIT = 50
 @app.get("/scanners")
 async def get_scanners(limit: int = 10, offset: int = 0, db: TinyDB=Depends(get_db)):
     limit = min(MAX_LIMIT, limit)
-    all_scanners = db.table("scanners").all()
+    all_scanners = db.table("ips").all()
     try:
         return all_scanners[offset:offset+limit]
     except IndexError:
