@@ -29,7 +29,7 @@ class Analyser(Thread):
                 ips[src_ip] = {}
                 ips[src_ip]["ports"] = []
             if packet["TCP"]["dport"] not in ips[src_ip]["ports"]:
-                ips[src_ip]["ports"].add(packet["TCP"]["dport"])
+                ips[src_ip]["ports"].append(packet["TCP"]["dport"])
 
         for ip, info in ips.items():
             if self.its_scanner(info):
