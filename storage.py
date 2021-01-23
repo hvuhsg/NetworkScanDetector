@@ -4,7 +4,7 @@ from time import sleep
 from tinydb import TinyDB
 from loguru import logger
 
-from utils import pkg_to_json
+from utils import pkg_to_json, get_db
 
 
 class Storage(Thread):
@@ -12,7 +12,7 @@ class Storage(Thread):
         super().__init__()
         self.packets_queue = packets_queue
         self.__stop = False
-        self.db = TinyDB("data/db.json")
+        self.db = get_db()
         self.packets = self.db.table("packets")
         self.db_lock = Lock()
 
@@ -29,6 +29,8 @@ class Storage(Thread):
                         self.packets.insert(json_packet)
                 except TypeError:
                     logger.debug(f"Can't insert json format {json_packet}")
+                except ValueError:
+                    logger.debug("DB file is closed")
             except Empty:
                 sleep(0.01)
 

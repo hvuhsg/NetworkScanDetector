@@ -14,6 +14,7 @@ class Sniffer(Thread):
 
     def setup(self):
         self.my_ip = self.find_my_ip()
+        logger.debug("local ip Found")
 
     def find_my_ip(self):
         logger.debug("Finding local ip...")

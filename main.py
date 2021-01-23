@@ -1,13 +1,23 @@
-from queue import Queue
 from threading import enumerate, current_thread
-from loguru import logger
+from queue import Queue
 
-from analyser import Analyser
+from api import app
 from storage import Storage
 from sniffer import Sniffer
+from analyser import Analyser
+from loguru import logger
 
 
-def main():
+@app.on_event("shutdown")
+async def shutdown_event():
+    for thread in enumerate():
+        if thread is not current_thread():
+            thread.stop()  # I added stop function to every thread in the code (Custom thread class)
+            thread.join()
+
+
+@app.on_event("startup")
+async def startup_event():
     q = Queue()
     sniffer = Sniffer(q)
     storage = Storage(q)
@@ -18,15 +28,4 @@ def main():
     logger.info("Starting storage")
     storage.start()
     logger.info("Starting analyser")
-    analyser.run()
-
-    analyser.stop()
-    storage.stop()
-    sniffer.stop()
-
-    for thread in enumerate():
-        if thread is not current_thread():
-            thread.join()
-    logger.info("Closing completed")
-
-main()
+    analyser.start()

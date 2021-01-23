@@ -1,12 +1,14 @@
 from time import sleep, time
 from tinydb import Query
 from loguru import logger
+from threading import Thread
 
 from storage import Storage
 
 
-class Analyser:
+class Analyser(Thread):
     def __init__(self, storage: Storage):
+        super().__init__()
         self.storage = storage
         self.__stop = False
         self.reported = []

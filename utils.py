@@ -1,4 +1,6 @@
+from tinydb import TinyDB
 
+__all__ = ["pkg_to_json", "get_db"]
 
 class JsonPacket:
     def __init__(self, pkt):
@@ -63,3 +65,7 @@ def pkg_to_json(pkg):
     json_packet = {list(layer.keys())[0]: list(layer.values())[0] for layer in json_packet}
     json_packet.pop("Raw", None)
     return json_packet
+
+
+def get_db():
+    return TinyDB("data/db.json")
