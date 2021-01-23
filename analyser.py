@@ -36,6 +36,8 @@ class Analyser(Thread):
                 logger.success(f"PORT SCAN FROM {ip} {len(info['ports'])} PORTS SCANED")
                 IP = Query()
                 ip_info = self.ips.search(IP.ip == ip)
+                if ip_info:
+                    ip_info = ip_info[0]
                 if not ip_info:
                     self.ips.insert({"ip": ip, "scanner": True, "ports": info["ports"], "time": time()})
                 elif ip_info["scanner"] is False:
