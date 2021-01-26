@@ -8,8 +8,8 @@ from utils import get_db
 
 
 class Analyser(Thread):
-    def __init__(self, storage: Storage):
-        super().__init__()
+    def __init__(self, storage: Storage, **kwargs):
+        super().__init__(**kwargs)
         self.storage = storage
         self.__stop = False
         self.reported = []
@@ -18,8 +18,11 @@ class Analyser(Thread):
     def analyse(self):
         logger.debug("Analysing traffic...")
         Packet = Query()
-        with self.storage.db_lock:
-            packets = self.storage.packets.search(Packet.TCP.flags == "S")
+        try:
+            with self.storage.db_lock:
+                packets = self.storage.packets.search(Packet.TCP.flags == "S")
+        except ValueError:
+            return
 
         ips = {}
 

@@ -1,4 +1,4 @@
-from threading import Thread, Lock
+from threading import Thread, RLock
 from queue import Empty
 from time import sleep
 from loguru import logger
@@ -7,13 +7,13 @@ from utils import pkg_to_json, get_db
 
 
 class Storage(Thread):
-    def __init__(self, packets_queue):
-        super().__init__()
+    def __init__(self, packets_queue, **kwargs):
+        super().__init__(**kwargs)
         self.packets_queue = packets_queue
         self.__stop = False
         self.db = get_db()
         self.packets = self.db.table("packets")
-        self.db_lock = Lock()
+        self.db_lock = RLock()
 
     def run(self):
         self.package_extractor()
@@ -21,7 +21,7 @@ class Storage(Thread):
     def package_extractor(self):
         while not self.__stop:
             try:
-                packet = self.packets_queue.get()
+                packet = self.packets_queue.get(timeout=5)
                 json_packet = pkg_to_json(packet)
                 try:
                     with self.db_lock:

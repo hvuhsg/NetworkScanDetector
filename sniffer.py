@@ -5,8 +5,8 @@ from scapy.all import sniff
 
 
 class Sniffer(Thread):
-    def __init__(self, packets_queue: Queue):
-        super().__init__()
+    def __init__(self, packets_queue: Queue, **kwargs):
+        super().__init__(**kwargs)
         self.packets = []
         self.packets_queue = packets_queue
         self.my_ip = None
@@ -20,7 +20,7 @@ class Sniffer(Thread):
         logger.debug("Finding local ip...")
         src = set()
         dst = set()
-        while True:
+        while not self.__stop:
             packets = sniff(count=10, filter="tcp")
             for packet in packets:
                 if packet["IP"].src in dst:
@@ -47,7 +47,7 @@ class Sniffer(Thread):
         return packet["IP"].dst in (self.my_ip, "10.128.0.3")
 
     def add_packet_to_queue(self, packet):
-        self.packets_queue.put(packet)
+        self.packets_queue.put(packet, timeout=5)
 
     def stop(self):
         logger.debug("Stoping sniffer...")

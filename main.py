@@ -19,9 +19,9 @@ async def shutdown_event():
 @app.on_event("startup")
 async def startup_event():
     q = Queue()
-    sniffer = Sniffer(q)
-    storage = Storage(q)
-    analyser = Analyser(storage)
+    sniffer = Sniffer(q, name="sniffer")
+    storage = Storage(q, name="storage")
+    analyser = Analyser(storage, name="analyser")
 
     logger.info("Starting sniffer")
     sniffer.start()
