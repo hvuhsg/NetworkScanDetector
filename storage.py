@@ -22,9 +22,11 @@ class Storage(Thread):
         while not self.__stop:
             try:
                 packet = self.packets_queue.get(timeout=5)
-                # if str(packet["TCP"].flags) == "S":
-                #     logger.debug("Port Scened")
+                if str(packet["TCP"].flags) == "S":
+                    # logger.debug("Port Scened")
+                    breakpoint()
                 json_packet = pkg_to_json(packet)
+
                 try:
                     with self.db_lock:
                         self.packets.insert(json_packet)

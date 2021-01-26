@@ -18,12 +18,9 @@ class Analyser(Thread):
     def analyse(self):
         logger.debug("Analysing traffic...")
         Packet = Query()
-        try:
-            with self.storage.db_lock:
-                packets = self.storage.packets.search(Packet.TCP.flags == "S")
-        except ValueError as VE:
-            logger.error(VE)
-            return
+
+        with self.storage.db_lock:
+            packets = self.storage.packets.search(Packet.TCP.flags == "S")
 
         ips = {}
 
