@@ -30,7 +30,8 @@ class Storage(Thread):
                         self.packets.insert(json_packet)
                 except TypeError:
                     logger.debug(f"Can't insert json format {json_packet}")
-                except ValueError:
+                except ValueError as VE:
+                    logger.error(VE)
                     logger.debug("DB file is closed")
             except Empty:
                 sleep(0.01)
