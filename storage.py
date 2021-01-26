@@ -22,6 +22,8 @@ class Storage(Thread):
         while not self.__stop:
             try:
                 packet = self.packets_queue.get(timeout=5)
+                if str(packet["TCP"].flags) == "S":
+                    logger.debug("Port Scened")
                 json_packet = pkg_to_json(packet)
                 try:
                     with self.db_lock:
