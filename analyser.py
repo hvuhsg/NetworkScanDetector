@@ -25,7 +25,6 @@ class Analyser(Thread):
         except ValueError:
             return
 
-
         ips = {}
 
         for packet in packets:

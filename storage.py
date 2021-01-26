@@ -23,8 +23,7 @@ class Storage(Thread):
             try:
                 packet = self.packets_queue.get(timeout=5)
                 if str(packet["TCP"].flags) == "S":
-                    # logger.debug("Port Scened")
-                    breakpoint()
+                    sleep(0.1)
                 json_packet = pkg_to_json(packet)
 
                 try:
