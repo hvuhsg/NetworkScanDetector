@@ -21,7 +21,8 @@ class Analyser(Thread):
         try:
             with self.storage.db_lock:
                 packets = self.storage.packets.search(Packet.TCP.flags == "S")
-        except ValueError:
+        except ValueError as VE:
+            logger.error(VE)
             return
 
         ips = {}
